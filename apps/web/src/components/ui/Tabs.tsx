@@ -2,18 +2,21 @@
 
 import * as React from "react";
 
+type TabsContextType = {
+  activeTab: string;
+  setActiveTab: (v: string) => void;
+};
+
+const TabsContext = React.createContext<TabsContextType | undefined>(undefined);
+
 export const Tabs = ({ defaultValue, children }: { defaultValue: string, children: React.ReactNode }) => {
   const [activeTab, setActiveTab] = React.useState(defaultValue);
   return (
-    <div className="w-full">
-      {React.Children.map(children, child => {
-        if (React.isValidElement(child)) {
-          // @ts-expect-error forcing prop injection
-          return React.cloneElement(child, { activeTab, setActiveTab });
-        }
-        return child;
-      })}
-    </div>
+    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+      <div className="w-full">
+        {children}
+      </div>
+    </TabsContext.Provider>
   );
 };
 
@@ -25,12 +28,16 @@ export const TabsList = ({ className = "", children, ...props }: React.HTMLAttri
   );
 };
 
-export const TabsTrigger = ({ value, activeTab, setActiveTab, className = "", children }: { value: string, activeTab?: string, setActiveTab?: (v: string) => void, className?: string, children: React.ReactNode }) => {
+export const TabsTrigger = ({ value, className = "", children }: { value: string, className?: string, children: React.ReactNode }) => {
+  const context = React.useContext(TabsContext);
+  if (!context) return null;
+  const { activeTab, setActiveTab } = context;
   const isActive = activeTab === value;
+  
   return (
     <button
       type="button"
-      onClick={() => setActiveTab && setActiveTab(value)}
+      onClick={() => setActiveTab(value)}
       className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent
         ${isActive ? "bg-panel text-foreground shadow-sm" : "hover:text-foreground hover:bg-panel/50"}
         ${className}`}
@@ -40,7 +47,11 @@ export const TabsTrigger = ({ value, activeTab, setActiveTab, className = "", ch
   );
 };
 
-export const TabsContent = ({ value, activeTab, className = "", children }: { value: string, activeTab?: string, className?: string, children: React.ReactNode }) => {
+export const TabsContent = ({ value, className = "", children }: { value: string, className?: string, children: React.ReactNode }) => {
+  const context = React.useContext(TabsContext);
+  if (!context) return null;
+  const { activeTab } = context;
+  
   if (value !== activeTab) return null;
   return <div className={`mt-2 ${className}`}>{children}</div>;
 };
