@@ -1,6 +1,23 @@
 @import "tailwindcss";
 
 :root {
+  /* Light mode colors */
+  --background: #ffffff;
+  --foreground: #0A0B0F;
+  --muted: #64748B;
+  --panel: #F8FAFC;
+  --panel-alt: #F1F5F9;
+  --border-color: #E2E8F0;
+  --accent: #5C6DFF;
+  --accent-hover: #4858DD;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --info: #3B82F6;
+}
+
+.dark {
+  /* Dark mode colors */
   --background: #0A0B0F;
   --foreground: #F5F7FB;
   --muted: #9AA3B2;
