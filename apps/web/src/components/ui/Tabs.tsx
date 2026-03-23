@@ -8,7 +8,8 @@ export const Tabs = ({ defaultValue, children }: { defaultValue: string, childre
     <div className="w-full">
       {React.Children.map(children, child => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child, { activeTab, setActiveTab } as any);
+          // @ts-expect-error forcing prop injection
+          return React.cloneElement(child, { activeTab, setActiveTab });
         }
         return child;
       })}
@@ -16,7 +17,7 @@ export const Tabs = ({ defaultValue, children }: { defaultValue: string, childre
   );
 };
 
-export const TabsList = ({ className = "", children, ...props }: any) => {
+export const TabsList = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div className={`inline-flex h-10 items-center justify-center rounded-md bg-panel-alt p-1 text-muted ${className}`} {...props}>
       {children}
@@ -24,12 +25,12 @@ export const TabsList = ({ className = "", children, ...props }: any) => {
   );
 };
 
-export const TabsTrigger = ({ value, activeTab, setActiveTab, className = "", children }: any) => {
+export const TabsTrigger = ({ value, activeTab, setActiveTab, className = "", children }: { value: string, activeTab?: string, setActiveTab?: (v: string) => void, className?: string, children: React.ReactNode }) => {
   const isActive = activeTab === value;
   return (
     <button
       type="button"
-      onClick={() => setActiveTab(value)}
+      onClick={() => setActiveTab && setActiveTab(value)}
       className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent
         ${isActive ? "bg-panel text-foreground shadow-sm" : "hover:text-foreground hover:bg-panel/50"}
         ${className}`}
@@ -39,7 +40,7 @@ export const TabsTrigger = ({ value, activeTab, setActiveTab, className = "", ch
   );
 };
 
-export const TabsContent = ({ value, activeTab, className = "", children }: any) => {
+export const TabsContent = ({ value, activeTab, className = "", children }: { value: string, activeTab?: string, className?: string, children: React.ReactNode }) => {
   if (value !== activeTab) return null;
   return <div className={`mt-2 ${className}`}>{children}</div>;
 };
